@@ -12,16 +12,11 @@ export const handler = async (event, context) => {
     }
 
     try {
-        // 打印环境变量，确认是否读取成功
-        console.log("API_URL:", process.env.API_URL);
-        console.log("MODEL:", process.env.MODEL);
-        console.log("API_KEY 长度:", process.env.API_KEY?.length);
-
         const { prompt } = JSON.parse(event.body);
-        console.log("收到的prompt:", prompt);
-
+        
+        // ✅ 直接写死火山方舟官方完整地址，确保不会再出现Invalid URL
         const response = await axios.post(
-            process.env.API_URL,
+            "https://ark.cn-beijing.volces.com/api/v3/chat/completions",
             {
                 model: process.env.MODEL,
                 messages: [{ role: 'user', content: prompt }]
@@ -33,14 +28,12 @@ export const handler = async (event, context) => {
                 }
             }
         );
-        console.log("AI返回成功:", response.data);
         return {
             statusCode: 200,
             headers,
             body: response.data.choices[0].message.content
         };
     } catch (error) {
-        // 打印完整错误信息
         console.error("请求失败:", error.response?.data || error.message);
         return {
             statusCode: 500,
