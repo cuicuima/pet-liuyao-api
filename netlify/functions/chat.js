@@ -1,18 +1,25 @@
 import axios from 'axios';
 
-export default async function handler(req, context) {
+// ✅ 标准 Netlify 函数格式，参数名必须是 event, context
+export const handler = async (event, context) => {
     const headers = {
         'Access-Control-Allow-Origin': '*',
         'Access-Control-Allow-Methods': 'POST, OPTIONS',
         'Access-Control-Allow-Headers': 'Content-Type'
     };
 
-    if (req.httpMethod === 'OPTIONS') {
-        return { statusCode: 200, headers, body: '' };
+    // 处理跨域预检请求
+    if (event.httpMethod === 'OPTIONS') {
+        return {
+            statusCode: 200,
+            headers,
+            body: ''
+        };
     }
 
     try {
-        const { prompt } = JSON.parse(req.body);
+        // 解析请求体
+        const { prompt } = JSON.parse(event.body);
         const response = await axios.post(
             process.env.API_URL,
             {
@@ -32,10 +39,11 @@ export default async function handler(req, context) {
             body: response.data.choices[0].message.content
         };
     } catch (error) {
+        console.error('AI请求失败:', error);
         return {
             statusCode: 500,
             headers,
-            body: '解读失败'
+            body: '解读失败，API配置或额度异常'
         };
     }
-}
+};
