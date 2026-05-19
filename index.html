@@ -124,8 +124,8 @@
     </div>
 
     <script>
-        // ✅ 关键：用相对路径请求接口，和后端同域名，彻底消除跨域
-        const API_PROXY_URL = "/api/chat";
+        // ✅ 适配Netlify的API路径
+        const API_PROXY_URL = "/.netlify/functions/chat";
 
         const GUA64 = [
             "乾卦","坤卦","屯卦","蒙卦","需卦","讼卦","师卦","比卦",
